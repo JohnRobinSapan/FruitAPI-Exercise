@@ -79,14 +79,14 @@ app.MapGet("/fruitlist", async (FruitDb db, HttpContext context) =>
 
 app.MapGet("/fruitlist/instock", async (FruitDb db) =>
     await db.Fruits.Where(t => t.Instock).ToListAsync())
-    .WithTags("Get all fruit that is in stock");
+    .WithTags("Get all fruit that is in stock").AddEndpointFilter<ApiKeyEndpointFilter>();
 
 app.MapGet("/fruitlist/{id}", async (int id, FruitDb db) =>
     await db.Fruits.FindAsync(id)
         is Fruit fruit
             ? Results.Ok(fruit)
             : Results.NotFound())
-    .WithTags("Get fruit by Id");
+    .WithTags("Get fruit by Id").AddEndpointFilter<ApiKeyEndpointFilter>();
 
 app.MapPost("/fruitlist", async (Fruit fruit, FruitDb db) =>
 {
@@ -95,7 +95,7 @@ app.MapPost("/fruitlist", async (Fruit fruit, FruitDb db) =>
 
     return Results.Created($"/fruitlist/{fruit.Id}", fruit);
 })
-    .WithTags("Add fruit to list");
+    .WithTags("Add fruit to list").AddEndpointFilter<ApiKeyEndpointFilter>();
 
 app.MapPut("/fruitlist/{id}", async (int id, Fruit inputFruit, FruitDb db) =>
 {
@@ -110,7 +110,7 @@ app.MapPut("/fruitlist/{id}", async (int id, Fruit inputFruit, FruitDb db) =>
 
     return Results.NoContent();
 })
-    .WithTags("Update fruit by Id");
+    .WithTags("Update fruit by Id").AddEndpointFilter<ApiKeyEndpointFilter>();
 
 app.MapDelete("/fruitlist/{id}", async (int id, FruitDb db) =>
 {
@@ -123,7 +123,7 @@ app.MapDelete("/fruitlist/{id}", async (int id, FruitDb db) =>
 
     return Results.NotFound();
 })
-    .WithTags("Delete fruit by Id");
+    .WithTags("Delete fruit by Id").AddEndpointFilter<ApiKeyEndpointFilter>();
 
 
 
