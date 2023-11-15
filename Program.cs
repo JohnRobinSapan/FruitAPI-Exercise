@@ -8,13 +8,7 @@ builder.Services.AddDbContext<FruitDb>(opt => opt.UseInMemoryDatabase("FruitList
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddEndpointsApiExplorer();
 
-// var settings = builder.Configuration.GetSection("Settings").Get<ApiKeyAuthenticationSchemeOptions>();
-
-// builder.Services.AddAuthentication("ApiKey")
-//     .AddScheme<ApiKeyAuthenticationSchemeOptions, ApiKeyAuthenticationSchemeHandler>(
-//         "ApiKey",
-//         opts => opts.ApiKey = settings.ApiKey
-//     );
+// Swagger Config
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -71,22 +65,28 @@ if (app.Environment.IsDevelopment())
 }
 
 // Add API key authentication middleware
-// app.UseMiddleware<ApiKeyMiddleware>();
+app.UseMiddleware<ApiKeyMiddleware>();
 
 app.MapGet("/fruitlist", async (FruitDb db, HttpContext context) =>
     await db.Fruits.ToListAsync())
-    .WithTags("Get all fruit").AddEndpointFilter<ApiKeyEndpointFilter>();
+    .WithTags("Get all fruit")
+    //.AddEndpointFilter<ApiKeyEndpointFilter>()
+    ;
 
 app.MapGet("/fruitlist/instock", async (FruitDb db) =>
     await db.Fruits.Where(t => t.Instock).ToListAsync())
-    .WithTags("Get all fruit that is in stock").AddEndpointFilter<ApiKeyEndpointFilter>();
+    .WithTags("Get all fruit that is in stock")
+    //.AddEndpointFilter<ApiKeyEndpointFilter>()
+    ;
 
 app.MapGet("/fruitlist/{id}", async (int id, FruitDb db) =>
     await db.Fruits.FindAsync(id)
         is Fruit fruit
             ? Results.Ok(fruit)
             : Results.NotFound())
-    .WithTags("Get fruit by Id").AddEndpointFilter<ApiKeyEndpointFilter>();
+    .WithTags("Get fruit by Id")
+    // .AddEndpointFilter<ApiKeyEndpointFilter>()
+    ;
 
 app.MapPost("/fruitlist", async (Fruit fruit, FruitDb db) =>
 {
@@ -95,7 +95,9 @@ app.MapPost("/fruitlist", async (Fruit fruit, FruitDb db) =>
 
     return Results.Created($"/fruitlist/{fruit.Id}", fruit);
 })
-    .WithTags("Add fruit to list").AddEndpointFilter<ApiKeyEndpointFilter>();
+    .WithTags("Add fruit to list")
+    // .AddEndpointFilter<ApiKeyEndpointFilter>()
+    ;
 
 app.MapPut("/fruitlist/{id}", async (int id, Fruit inputFruit, FruitDb db) =>
 {
@@ -110,7 +112,9 @@ app.MapPut("/fruitlist/{id}", async (int id, Fruit inputFruit, FruitDb db) =>
 
     return Results.NoContent();
 })
-    .WithTags("Update fruit by Id").AddEndpointFilter<ApiKeyEndpointFilter>();
+    .WithTags("Update fruit by Id")
+    // .AddEndpointFilter<ApiKeyEndpointFilter>()
+    ;
 
 app.MapDelete("/fruitlist/{id}", async (int id, FruitDb db) =>
 {
@@ -123,7 +127,9 @@ app.MapDelete("/fruitlist/{id}", async (int id, FruitDb db) =>
 
     return Results.NotFound();
 })
-    .WithTags("Delete fruit by Id").AddEndpointFilter<ApiKeyEndpointFilter>();
+    .WithTags("Delete fruit by Id")
+    // .AddEndpointFilter<ApiKeyEndpointFilter>()
+    ;
 
 
 
